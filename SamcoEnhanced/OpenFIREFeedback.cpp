@@ -119,7 +119,7 @@ void FFB::FFBRelease()
         }
     }
     
-    // If Rumble FF is enabled and Autofire is enabled, the motor needs to be disabled when the trigger is released. Otherwiseallow RumbleActivation to deal with the activation timer
+    // If Rumble FF is enabled and Autofire is enabled, the motor needs to be disabled when the trigger is released. Otherwise allow RumbleActivation to deal with the activation timer
     if(SamcoPreferences::toggles.rumbleFF && SamcoPreferences::toggles.autofireActive) {
         if(rumbleHappening || rumbleHappened) {
             digitalWrite(SamcoPreferences::pins.oRumble, LOW);      // Make sure the rumble is OFF.
@@ -221,7 +221,7 @@ void FFB::RumbleActivation()
     if(rumbleHappening) {                                         // Are we in a rumble command rn?
         currentMillis = millis();                                 // Calibrate a timer to set how long we've been rumbling.
         if(SamcoPreferences::toggles.rumbleFF) {
-            if(!SamcoPreferences::toggles.autofireActive) {       // We only want to use the rumble timer is Autofire is not active. Otherwise, keep it going
+            if(!SamcoPreferences::toggles.autofireActive) {       // We only want to use the rumble timer if Autofire is not active. Otherwise, keep it going
                 if(currentMillis - previousMillisRumble >= SamcoPreferences::settings.rumbleInterval / 2) { // If we've been waiting long enough for this whole rumble command,
                     digitalWrite(SamcoPreferences::pins.oRumble, LOW);                         // Make sure the rumble is OFF.
                     rumbleHappening = false;                              // This rumble command is done now.
