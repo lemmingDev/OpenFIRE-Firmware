@@ -118,12 +118,21 @@ void FFB::FFBRelease()
             }
         }
     }
-
-    if(rumbleHappening) {                                   // Are we currently in a rumble command? (Implicitly needs SamcoPreferences::toggles.rumbleActive)
-        RumbleActivation();                                 // Continue processing our rumble command.
-        // (This is to prevent making the lack of trigger pull actually activate a rumble command instead of skipping it like we should.)
-    } else if(rumbleHappened) {                             // If rumble has happened,
-        rumbleHappened = false;                             // well we're clear now that we've stopped holding.
+    
+    // If Rumble FF is enabled and Autofire is enabled, the motor needs to be disabled when the trigger is released. Otherwiseallow RumbleActivation to deal with the activation timer
+    if(SamcoPreferences::toggles.rumbleFF && SamcoPreferences::toggles.autofireActive) {
+        if(rumbleHappening || rumbleHappened) {
+            digitalWrite(SamcoPreferences::pins.oRumble, LOW);      // Make sure the rumble is OFF.
+            rumbleHappening = false;                                // This rumble command is done now.
+            rumbleHappened = false;                                 // Make it clear we've stopped holding.
+        }
+    } else {
+        if(rumbleHappening) {                                   // Are we currently in a rumble command? (Implicitly needs SamcoPreferences::toggles.rumbleActive)
+            RumbleActivation();                                 // Continue processing our rumble command.
+            // (This is to prevent making the lack of trigger pull actually activate a rumble command instead of skipping it like we should.)
+        } else if(rumbleHappened) {                             // If rumble has happened,
+            rumbleHappened = false;                             // well we're clear now that we've stopped holding.
+        }
     }
 }
 
