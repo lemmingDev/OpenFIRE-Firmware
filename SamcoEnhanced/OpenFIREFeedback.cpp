@@ -212,10 +212,12 @@ void FFB::RumbleActivation()
     if(rumbleHappening) {                                         // Are we in a rumble command rn?
         currentMillis = millis();                                 // Calibrate a timer to set how long we've been rumbling.
         if(SamcoPreferences::toggles.rumbleFF) {
-            if(currentMillis - previousMillisRumble >= SamcoPreferences::settings.rumbleInterval / 2) { // If we've been waiting long enough for this whole rumble command,
-                digitalWrite(SamcoPreferences::pins.oRumble, LOW);                         // Make sure the rumble is OFF.
-                rumbleHappening = false;                              // This rumble command is done now.
-                rumbleHappened = true;                                // And just to make sure, to prevent holding == repeat rumble commands.
+            if(!SamcoPreferences::toggles.autofireActive) {       // We only want to use the rumble timer is Autofire is not active. Otherwise, keep it going
+                if(currentMillis - previousMillisRumble >= SamcoPreferences::settings.rumbleInterval / 2) { // If we've been waiting long enough for this whole rumble command,
+                    digitalWrite(SamcoPreferences::pins.oRumble, LOW);                         // Make sure the rumble is OFF.
+                    rumbleHappening = false;                              // This rumble command is done now.
+                    rumbleHappened = true;                                // And just to make sure, to prevent holding == repeat rumble commands.
+                }
             }
         } else {
             if(currentMillis - previousMillisRumble >= SamcoPreferences::settings.rumbleInterval) { // If we've been waiting long enough for this whole rumble command,
